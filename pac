@@ -37,6 +37,9 @@ main()
         "-u"|"--update") 
             exec_update
             ;;
+        "-l"|"--list") 
+            exec_list
+            ;;
         *)
             usage 1
             ;;
@@ -79,6 +82,17 @@ exec_update()
 }
 
 # ******************************************************************************
+# Display updateable packages
+exec_list()
+{
+    set_package_names
+    set_package_dates
+    set_package_list
+    sort_package_items
+    display_packages
+}
+
+# ******************************************************************************
 # Execute pacman on all packages
 exec_pacman()
 {
@@ -89,6 +103,7 @@ exec_pacman()
     for i in "${range[@]}"; do
         dates="${PACKAGE_DATES[${i}]}"
         names="${PACKAGE_NAMES[${i}]}"
+        # change to [blue]Name: <package> (#/total#)
         desc=`pacman -Si "${names}" \
                   | grep "Name\|Description" \
                   | sed -e "s/Name   /Package/" -e 's/   //'`
@@ -152,7 +167,7 @@ set_package_dates()
     PACKAGE_DATES=(`echo "${PACKAGE_NAMES[@]}" \
                         | xargs pacman -Si \
                         | grep --color=never "Build Date" \
-                        | sed -e 's/Build Date     : //'`)
+                        | sed -e 's/Build Date[ \t]*: //'`)
     n=${#PACKAGE_DATES[@]}
     if [ ${n} -eq 0 ]; then
         echo ":: No packages available to update."
