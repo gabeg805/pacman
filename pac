@@ -118,10 +118,6 @@ exec_pacman()
             count=$[${count} + 1]
         fi
     done
-
-    if [ ${count} -gt 0 ]; then
-        sync_man_pages
-    fi
 }
 
 # ******************************************************************************
@@ -202,15 +198,6 @@ sync_package_database()
     else
         echo "Fail."
     fi
-}
-
-# ******************************************************************************
-# Update the man pages
-sync_man_pages()
-{
-    echo -n -e "\n:: Updating man pages..."
-    sudo mandb -q   
-    echo "Done"
 }
 
 # ******************************************************************************
